@@ -1,14 +1,16 @@
 export interface DockStateModel {
   sensorSlots: SensorSlot[][];
-  currentlySelectedSet: Set;
-  existingSets: Set[];
+  currentlySelectedSet: Set | null;
+  existingSets: Set[] | null;
 }
 
 export interface SensorSlot {
   setId: string;
   occupied: boolean;
-  position: number;
-  current?: boolean;
+  position: string;
+  saved: boolean;
+  color: string;
+  is_outlined: boolean;
 }
 
 export enum DockType {
@@ -24,7 +26,7 @@ export enum SetType {
 export interface Set {
   id: string;
   setType: SetType;
-  position: number;
+  position: string;
   color: string;
   is_outlined: boolean;
 }

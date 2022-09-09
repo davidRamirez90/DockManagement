@@ -5,23 +5,18 @@ rect.dock {
 }
 
 rect.sensor {
-  fill: #d9d9d9;
-  stroke-width: 2px;
-  stroke: #cbcbcb;
+  stroke-width: 4px;
   transition: 0.5s ease;
   pointer-events: none;
 }
 
 rect.sensor.selected {
-  fill: #fa0;
-  stroke: rgb(214, 143, 0);
 }
 
 g.sensorsGroup.LTR rect.sensor:not(.selected):nth-of-type(3n-2):hover,
 g.sensorsGroup.Single rect.sensor:not(.selected):hover {
   cursor: pointer;
-  fill: rgb(182, 182, 182);
-  stroke: #b1b1b1;
+  filter: alpha(opacity=50);
 }
 
 g.sensorsGroup.LTR rect.sensor:not(.selected):nth-of-type(3n-2),

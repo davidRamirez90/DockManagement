@@ -7,14 +7,14 @@
 
 <div>
   <svg
-    attr.width="{{ svgWidth }}"
-    attr.height="{{ svgHeight }}"
-    attr.viewBox="0 0 svgWidth svgHeight"
+    [attr.width]="svgWidth"
+    [attr.height]="svgHeight"
+    [attr.viewBox]="'0 0'+ svgWidth + ' '+ svgHeight"
   >
     <g
       class="sensorsGroup {{ setType }}"
       *ngIf="viewModel$ | async as vm"
-      attr.transform="translate({{ margin.left }}, {{ margin.top }})"
+      [attr.transform]="'translate('+ margin.left + ', ' + margin.top + ')'"
     >
       <rect
         class="dock"
@@ -29,10 +29,12 @@
           class="sensor {{ columnIndex }}"
           [class.selected]="sensor.occupied"
           *ngFor="let sensor of row; index as columnIndex"
-          [attr.x]="xSensorScale(columnIndex)"
-          [attr.y]="ySensorScale(rowIndex)"
+          [attr.x]="xSensorScale(columnIndex.toString())"
+          [attr.y]="ySensorScale(rowIndex.toString())"
           [attr.height]="ySensorScale.bandwidth()"
           [attr.width]="xSensorScale.bandwidth()"
+          [attr.fill]="sensor.is_outlined ? 'white' : sensor.color"
+          [attr.stroke]="sensor.color"
           rx="5"
         />
       </g>

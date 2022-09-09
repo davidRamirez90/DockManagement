@@ -5,24 +5,51 @@ import { DockStateModel, SensorSlot, Set, SetType } from './models';
 
 @Injectable()
 export class StateService {
+  emptySlotColor = '#e3e3e3';
   totalRows = 4;
   totalCols = 6;
+  defaultSets: Set[] = [
+    {
+        id: '1',
+        setType: SetType.LTR,
+        position: '0',
+        color: '#fa0',
+        is_outlined: false,
+    },
+    {
+        id: '2',
+        setType: SetType.LTR,
+        position: '3',
+        color: '#fa0',
+        is_outlined: true,
+    },
+    {
+        id: '3',
+        setType: SetType.SINGLE,
+        position: '21',
+        color: '#56e8b3',
+        is_outlined: false,
+    }
+  ];
   defaultState: DockStateModel = {
     sensorSlots: [
       ...Array.from({ length: this.totalRows }, (_, rowI) => {
         return [
           ...Array.from({ length: this.totalCols }, (_, colI) => {
             return {
-              setId: null,
+              setId: 'randomid',
               occupied: false,
-              position: Number(this.totalCols * rowI + colI),
+              position: (Number(this.totalCols) * rowI + colI).toString(),
+              saved: false,
+              color: '#d9d9d9',
+              is_outlined: true
             } as SensorSlot;
           }),
         ];
       }),
     ],
     currentlySelectedSet: null,
-    existingSets: null
+    existingSets: this.defaultSets
   };
 
   state$: BehaviorSubject<DockStateModel> = new BehaviorSubject(
@@ -61,24 +88,25 @@ export class StateService {
 
   mapSelectedSetsToSensorSlots(
     sensorSlots: SensorSlot[][], 
-    existingSets: Set[], 
-    currentlySelectedSet: Set
-  ): { sensorSlots: SensorSlot[][], existingSensorSlots: SensorSlot[], currentlySelectedSlots: SensorSlot[] } {
+    existingSets: Set[] | null,
+    currentlySelectedSet: Set | null
+  ): { sensorSlots: SensorSlot[][], existingSensorSlots: SensorSlot[] | null, currentlySelectedSlots: SensorSlot[] | null } {
     return {
       sensorSlots: sensorSlots,
       currentlySelectedSlots: this.setToSlotsConverter(currentlySelectedSet),
-      existingSensorSlots: existingSets.map(this.setToSlotsConverter).flat(2)
+      existingSensorSlots: existingSets ? existingSets.map(this.setToSlotsConverter).flat(2) : null
     }
   }
 
   persistExistingSets(
     sensorSlots: SensorSlot[][], 
-    existingSensorSlots: SensorSlot[], 
-    currentlySelectedSlots: SensorSlot[]
-  ): { sensorSlots: SensorSlot[][], currentlySelectedSlots: SensorSlot[] } {
+    existingSensorSlots: SensorSlot[] | null,
+    currentlySelectedSlots: SensorSlot[] | null
+  ): { sensorSlots: SensorSlot[][], currentlySelectedSlots: SensorSlot[] | null } {
     return {
       sensorSlots: sensorSlots.map(row => {
-        return row = row.map(slot => {
+        return row.map(slot => {
+          if (!existingSensorSlots) return slot;
           // Returns -1 if not found
           const i = existingSensorSlots.findIndex(existingSlot => existingSlot.position === slot.position)
           if (i >= 0) {
@@ -94,21 +122,29 @@ export class StateService {
 
   selectCurrentSlot(
     sensorSlots: SensorSlot[][],
-    currentlySelectedSlots: SensorSlot[]
+    currentlySelectedSlots: SensorSlot[] | null
   ): SensorSlot[][] {
+    if (!currentlySelectedSlots) return sensorSlots;
     return sensorSlots.map(row => {
       return row.map(slot => {
-        if (currentlySelectedSlots.map(slot => slot.position).includes(slot.position)) {
+        if (slot.saved) return slot;
+        const i = currentlySelectedSlots.findIndex(selectedSlot => selectedSlot.position === slot.position);
+        if (i >= 0) {
+          console.log('found dock in position'+slot.position)
           return {
             ...slot,
             occupied: true,
-            current: true
+            saved: false,
+            color: 'teal',
+            is_outlined: true
           }
         } else {
           return {
             ...slot,
             occupied: false,
-            current: false
+            saved: false,
+            color: this.emptySlotColor,
+            is_outlined: true
           }
         }
       })
@@ -119,20 +155,27 @@ export class StateService {
   // UTILITIES
 
 
-  setToSlotsConverter(set: Set): SensorSlot[] {
+  setToSlotsConverter(set: Set | null): SensorSlot[] {
+    if (!set) return [];
     if (set.setType === SetType.LTR) {
       return [...Array.from({length: 3}, (_, i) => {
         return {
           setId: set.id,
           occupied: true,
-          position: Number(set.position + i)
+          position: (Number(set.position) + i).toString(),
+          color: set.color,
+          is_outlined: set.is_outlined,
+          saved: true
         } as SensorSlot
       })]
     } else {
       return [{
         setId: set.id,
         occupied: true,
-        position: set.position
+        position: set.position,
+        color: set.color,
+        is_outlined: set.is_outlined,
+        saved: true
       } as SensorSlot]
     }
   }

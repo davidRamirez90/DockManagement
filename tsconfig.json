@@ -9,10 +9,21 @@
     "experimentalDecorators": true,
     "module": "esnext",
     "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
     "importHelpers": true,
-    "target": "ES5",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2019", "dom"]
+    "target": "es2015",
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2019",
+      "dom",
+      "esnext.asynciterable"
+    ]
   },
   "angularCompilerOptions": {
     "enableIvy": true,
