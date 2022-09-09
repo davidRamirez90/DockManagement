@@ -1,0 +1,43 @@
+rect.dock {
+  stroke: #000000;
+  stroke-width: 2px;
+  fill: none;
+}
+
+rect.sensor {
+  fill: #d9d9d9;
+  stroke-width: 2px;
+  stroke: #cbcbcb;
+  transition: 0.5s ease;
+  pointer-events: none;
+}
+
+rect.sensor.selected {
+  fill: #fa0;
+  stroke: rgb(214, 143, 0);
+}
+
+g.sensorsGroup.LTR rect.sensor:not(.selected):nth-of-type(3n-2):hover,
+g.sensorsGroup.Single rect.sensor:not(.selected):hover {
+  cursor: pointer;
+  fill: rgb(182, 182, 182);
+  stroke: #b1b1b1;
+}
+
+g.sensorsGroup.LTR rect.sensor:not(.selected):nth-of-type(3n-2),
+g.sensorsGroup.Single rect.sensor:not(.selected) {
+  pointer-events: all;
+  animation-name: bounce;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+@keyframes bounce {
+  from {
+    transform: translateY(0%);
+  }
+
+  to {
+    transform: translateY(-0.5%);
+  }
+}
