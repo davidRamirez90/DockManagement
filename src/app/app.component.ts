@@ -5,6 +5,8 @@ import { tap } from 'rxjs/operators';
 import { SensorSlot, SetType } from './models';
 import { StateService } from './state.service';
 
+// TODO: Turn this component into a control form
+
 @Component({
   selector: 'my-app',
   templateUrl: './app.component.html',
